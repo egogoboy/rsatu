@@ -1,0 +1,292 @@
+#include "Tree.h"
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <ostream>
+#include <stdexcept>
+#include <string>
+
+void Tree::Print() {
+    PrintTree(head_, 0);
+}
+
+double Tree::GetAverageInternalPathLength() const {
+    return GetAverageInternalPathLength(head_);
+}
+
+double Tree::GetAverageExternalPathLength() const {
+    return GetAverageExternalPathLength(head_);
+}
+
+size_t Tree::GetNodesCount() const {
+    return count_of_nodes - 1;
+}
+
+size_t Tree::GetTreeHeight() const {
+    return head_->height;
+}
+
+void Tree::WriteTree(const std::string& filename) const {
+    std::vector<int> inorder;
+    inorder = GetInorder(head_, std::move(inorder));
+
+    std::ofstream fout(filename);
+    for (auto x : inorder) {
+        fout << x << " ";
+    }
+    fout.close();
+}
+
+void Tree::BuildFromFile(const std::string& filename) {
+    count_of_nodes = 0;
+    std::ifstream fin(filename);
+    if (!fin.is_open()) {
+        throw std::runtime_error("File doesn't exist");
+    }
+
+    head_ = MakeTree(fin);
+}
+
+void Tree::BuildWithN(int n) {
+    head_ = nullptr;
+    count_of_nodes = 0;
+    head_ = MakeTree(n, 0);
+}
+
+void Tree::Insert(int key) {
+    head_ = Insert(key, head_);
+}
+
+Node* Tree::Insert(int key, Node* root) {
+    if (root == nullptr) {
+        ++count_of_nodes;
+        return new Node(key);
+    }
+
+    if (key < root->key) {
+        root->left = Insert(key, root->left);
+    } else if (key > root->key) {
+        root->right = Insert(key, root->right);
+    }
+    
+    return root;
+}
+
+void Tree::Delete(int key) {
+    head_ = Delete(key, head_);
+} Node* Tree::Delete(int key, Node* root) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+    
+    if (key < root->key) {
+        root->left = Delete(key, root->left);
+    } else if (key > root->key) {
+        root->right = Delete(key, root->right);
+    } else {
+        --count_of_nodes;
+        if (root->left != nullptr) {
+            Node* to_delete = root;
+
+            Node* temp = root->right;
+            if (temp != nullptr) {
+                Node* parent = root;
+                while (temp->left != nullptr) {
+                    parent = temp;
+                    temp = temp->left;
+                }
+                if (temp != root->right) {
+                    temp->right = root->right;
+                    parent->left = nullptr;
+                }
+                temp->left = root->left;
+            }
+            root = temp;
+            delete to_delete;
+        } else if (root->right != nullptr) {
+            return root->right;
+        } else {
+            delete root;
+            root = nullptr;
+        }
+    }
+     
+    return root;
+}
+
+std::string Tree::Find(int key) {
+    return Find(key, head_);
+}
+
+std::string Tree::Find(int key, Node* root) {
+    if (root == nullptr) {
+        return "null";
+    }
+
+    std::string path = "";
+    if (key < root->val) {
+        path = Find(key, root->left);
+        if (path != "null") {
+            return "left " + path;
+        }
+    } else if (key > root->val) {
+        path = Find(key, root->right);
+        if (path != "null") {
+            return "right " + path;
+        }
+    }
+    return path;
+}
+
+bool Tree::CheckKeys() {
+    std::vector<int> keys;
+    keys = GetPreorder(head_, std::move(keys));
+
+    for (int i = 1; i < keys.size(); ++i) {
+        if (keys[i - 1] >= keys[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+std::string Tree::GetCopyright() {
+    return "Author: Egor Sudakov\nGroup: ipb-23\n2025 All rights reserved\n";
+}
+
+int Tree::GetHeight(Node* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+
+    return node->height;
+}
+
+Node* Tree::MakeTree(int n, int left_n) {
+    if (n == 0) {
+        return nullptr;
+    }
+
+    int nl = (n - 1) / 2;
+    int nr = n - 1 - nl;
+    
+    Node* tree = new Node(n / 2 + n % 2 + left_n, 0);
+    tree->left = MakeTree(nl, left_n);
+    tree->right = MakeTree(nr, tree->key);
+
+    ++count_of_nodes;
+    return tree;
+}
+
+Node* Tree::MakeTree(std::ifstream& fin) {
+    int val;
+    fin >> val;
+    if (val == -1) {
+        return nullptr;
+    }
+    Node* tree = new Node(val);
+
+    tree->left = MakeTree(fin);
+    tree->right = MakeTree(fin);
+    
+    ++count_of_nodes;
+    return tree;
+}
+
+void Tree::PrintStatistics() {
+    std::cout << "Depth: " << GetDepth(head_) << std::endl
+              << "Count of nodes: " << GetNodesCount() << std::endl
+              << "Average external path: " << GetAverageExternalPathLength() << std::endl
+              << "Average internal path: " << GetAverageInternalPathLength() << std::endl;
+}
+
+std::vector<int> Tree::GetPreorder(Node* node, std::vector<int> vec) const {
+    if (node == nullptr) {
+        return vec;
+    }
+
+    GetPreorder(node->left, std::move(vec));
+    vec.push_back(node->key);
+    GetPreorder(node->right, std::move(vec));
+
+    return vec;
+}
+
+std::vector<int> Tree::GetInorder(Node* node, std::vector<int> vec) const {
+    if (node == nullptr) {
+        vec.push_back(-1);
+        return vec;
+    }
+
+    vec.push_back(node->key);
+    vec = GetInorder(node->left, std::move(vec));
+    vec = GetInorder(node->right, std::move(vec));
+
+    return vec;
+}
+
+
+int CountInternalNodes(Node* root) {
+    if (!root) {
+        return 0;
+    }
+    return 1 + CountInternalNodes(root->left) + CountInternalNodes(root->right);
+}
+
+int GetInternalPathLength(Node* root, int depth = 0) {
+    if (!root) {
+        return 0;
+    }
+    return depth + GetInternalPathLength(root->left, depth + 1) + GetInternalPathLength(root->right, depth + 1);
+}
+
+double Tree::GetAverageInternalPathLength(Node* root) const {
+    int totalInternalPathLength = GetInternalPathLength(root);
+    int numInternalNodes = CountInternalNodes(root);
+    return static_cast<double>(totalInternalPathLength) / numInternalNodes;
+}
+
+int CountExternalNodes(Node* root) {
+    if (!root) {
+        return 1; 
+    }
+    return CountExternalNodes(root->left) + CountExternalNodes(root->right);
+}
+
+int GetExternalPathLength(Node* root, int depth = 0) {
+    if (!root) {
+        return depth; 
+    }
+    return GetExternalPathLength(root->left, depth + 1) + GetExternalPathLength(root->right, depth + 1);
+}
+
+double Tree::GetAverageExternalPathLength(Node* root) const {
+    int totalExternalPathLength = GetExternalPathLength(root);
+    int numExternalNodes = CountExternalNodes(root);
+    return static_cast<double>(totalExternalPathLength) / numExternalNodes;
+}
+
+Node* Tree::GetMinNode(Node* root) {
+    if (root->left == nullptr) {
+        return root;
+    }
+
+    return GetMinNode(root->left);
+}
+
+int Tree::GetDepth(Node* root) {
+    if (root == nullptr) {
+        return 0;
+    }
+
+    return 1 + std::max(GetDepth(root->left), GetDepth(root->right));
+}
+
+void Tree::PrintTree(Node* node, int deep) {
+    if (node != nullptr) {
+        Tree::PrintTree(node->right, deep + 4);
+        std::cout << std::string(deep, ' ') << node->key << std::endl;
+        Tree::PrintTree(node->left, deep + 4);
+    }
+}

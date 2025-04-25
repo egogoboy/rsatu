@@ -1,0 +1,10 @@
+
+Here's a sample text in English for testing a frequency dictionary program:
+
+The quick brown fox jumps over the lazy dog. The dog, not so lazy after all, barks loudly. Foxes are clever animals, and this fox is no exception. It quickly dodges the barking dog and sprints into the forest.
+
+In the forest, the fox encounters other animals: birds chirping in the trees, squirrels gathering nuts, and a deer drinking from a clear stream. Each animal plays its part in the ecosystem, creating a harmony of sounds and movements.
+
+As the sun sets, the forest grows quiet. The fox finds a safe spot to rest and watches the stars twinkle above. Life in the wild is full of challenges, but also moments of peace and wonder.
+
+This text contains diverse words, repeated phrases, and a mix of sentence structures, making it ideal for testing the accuracy of a frequency dictionary. Let me know if you need any modifications or additional features!

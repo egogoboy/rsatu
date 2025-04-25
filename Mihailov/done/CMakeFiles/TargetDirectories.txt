@@ -1,0 +1,3 @@
+/home/egogoboy/rsatu/Mihailov/done/CMakeFiles/laba.dir
+/home/egogoboy/rsatu/Mihailov/done/CMakeFiles/edit_cache.dir
+/home/egogoboy/rsatu/Mihailov/done/CMakeFiles/rebuild_cache.dir

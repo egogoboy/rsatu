@@ -1,0 +1,6 @@
+Sudakov Egor Urievich 1.5 89 15 5
+Ivanov Ivan Ivanovich 3 120 23 1000.1
+Ivanov Petr Ivanovich 3 120 23 1000.1
+Ivanov Roman Ivanovich 3 120 23 1000.1
+Sudakov Artem Urievich 1.5 89 15 5
+Sudakov Misha Urievich 1.5 89 15 5

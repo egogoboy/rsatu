@@ -1,0 +1,9 @@
+7 8
+q c
+c g
+b c
+e c
+b e
+d c
+f c
+d f

@@ -1,0 +1,6 @@
+max: 5
+min: 1
+difference: 4
+average: 3
+median: 3
+mode: 3
